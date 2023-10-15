@@ -11,11 +11,8 @@
 		6858CFB92A092AEB0063E6A5 /* Global.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6858CFB72A092AEB0063E6A5 /* Global.swift */; };
 		6858CFBA2A092AEB0063E6A5 /* LandingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6858CFB82A092AEB0063E6A5 /* LandingViewController.swift */; };
 		6858CFBD2A092E7D0063E6A5 /* SpaceInformationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6858CFBC2A092E7D0063E6A5 /* SpaceInformationViewController.swift */; };
+		8881F89E2A8CECFD00CE4A4D /* Info.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8881F89D2A8CECFD00CE4A4D /* Info.swift */; };
 		88B5B1BA2A2A28630048B391 /* TextFieldController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88B5B1B92A2A28630048B391 /* TextFieldController.swift */; };
-		88E1A2E92A2AE32800EAEA90 /* intro.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 88E1A2E82A2AE32800EAEA90 /* intro.usdz */; };
-		88E1A3052A30C71B00EAEA90 /* n202_3.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 88E1A3022A30C71B00EAEA90 /* n202_3.usdz */; };
-		88E1A3062A30C71B00EAEA90 /* n202_1.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 88E1A3032A30C71B00EAEA90 /* n202_1.usdz */; };
-		88E1A3072A30C71B00EAEA90 /* n202_2.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 88E1A3042A30C71B00EAEA90 /* n202_2.usdz */; };
 		88F3C33D2A04100500F3FE32 /* TcpClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88F3C33C2A04100400F3FE32 /* TcpClient.swift */; };
 		B966DD5E28E94A04000B9F38 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = B966DD5D28E94A04000B9F38 /* Utils.swift */; };
 		E73DD13124636FEF00D77039 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E73DD13024636FEF00D77039 /* AppDelegate.swift */; };
@@ -34,11 +31,8 @@
 		6858CFB72A092AEB0063E6A5 /* Global.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Global.swift; sourceTree = "<group>"; };
 		6858CFB82A092AEB0063E6A5 /* LandingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LandingViewController.swift; sourceTree = "<group>"; };
 		6858CFBC2A092E7D0063E6A5 /* SpaceInformationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceInformationViewController.swift; sourceTree = "<group>"; };
+		8881F89D2A8CECFD00CE4A4D /* Info.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Info.swift; sourceTree = "<group>"; };
 		88B5B1B92A2A28630048B391 /* TextFieldController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldController.swift; sourceTree = "<group>"; };
-		88E1A2E82A2AE32800EAEA90 /* intro.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = intro.usdz; sourceTree = "<group>"; };
-		88E1A3022A30C71B00EAEA90 /* n202_3.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = n202_3.usdz; sourceTree = "<group>"; };
-		88E1A3032A30C71B00EAEA90 /* n202_1.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = n202_1.usdz; sourceTree = "<group>"; };
-		88E1A3042A30C71B00EAEA90 /* n202_2.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = n202_2.usdz; sourceTree = "<group>"; };
 		88F3C33C2A04100400F3FE32 /* TcpClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TcpClient.swift; sourceTree = "<group>"; };
 		948146554F46E56B015690CC /* SampleCode.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = SampleCode.xcconfig; path = Configuration/SampleCode.xcconfig; sourceTree = "<group>"; };
 		B57D60B9736905755DECF7CE /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
@@ -90,6 +84,7 @@
 		6858CFBB2A092E470063E6A5 /* SpaceInformationView */ = {
 			isa = PBXGroup;
 			children = (
+				8881F89D2A8CECFD00CE4A4D /* Info.swift */,
 				6858CFBC2A092E7D0063E6A5 /* SpaceInformationViewController.swift */,
 			);
 			path = SpaceInformationView;
@@ -106,21 +101,8 @@
 		88E1A2E62A2AE2ED00EAEA90 /* Objects */ = {
 			isa = PBXGroup;
 			children = (
-				88E1A2E72A2AE2FE00EAEA90 /* 식물과학관 */,
 			);
 			path = Objects;
-			sourceTree = "<group>";
-		};
-		88E1A2E72A2AE2FE00EAEA90 /* 식물과학관 */ = {
-			isa = PBXGroup;
-			children = (
-				88E1A3032A30C71B00EAEA90 /* n202_1.usdz */,
-				88E1A3042A30C71B00EAEA90 /* n202_2.usdz */,
-				88E1A3022A30C71B00EAEA90 /* n202_3.usdz */,
-				88E1A2E82A2AE32800EAEA90 /* intro.usdz */,
-			);
-			name = "식물과학관";
-			path = "식물과학관";
 			sourceTree = "<group>";
 		};
 		A6415A999BE1C768F18B2649 /* Configuration */ = {
@@ -242,12 +224,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				88E1A3072A30C71B00EAEA90 /* n202_2.usdz in Resources */,
 				E73DD14024636FF100D77039 /* LaunchScreen.storyboard in Resources */,
-				88E1A3062A30C71B00EAEA90 /* n202_1.usdz in Resources */,
 				E73DD13D24636FF100D77039 /* Assets.xcassets in Resources */,
-				88E1A3052A30C71B00EAEA90 /* n202_3.usdz in Resources */,
-				88E1A2E92A2AE32800EAEA90 /* intro.usdz in Resources */,
 				E73DD13B24636FEF00D77039 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -272,6 +250,7 @@
 				88B5B1BA2A2A28630048B391 /* TextFieldController.swift in Sources */,
 				6858CFB92A092AEB0063E6A5 /* Global.swift in Sources */,
 				683B1D9A2A23916A00AA87AC /* PickerViewController.swift in Sources */,
+				8881F89E2A8CECFD00CE4A4D /* Info.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -5,50 +5,135 @@ import RealityKit
 import ARKit
 import RealityKit
 import Foundation
+import WebKit
 
-class SpaceInformationViewController: UIViewController, ARSessionDelegate {
+class SpaceInformationViewController: UIViewController, ARSessionDelegate, URLSessionTaskDelegate, WKNavigationDelegate {
     private let startButton = UIButton()
     @IBOutlet var arView: ARView!
     let label = UILabel()
+    let appDelegate = UIApplication.shared.delegate as! AppDelegate
     
     private let orientation = UIInterfaceOrientation.landscapeRight
     private lazy var rotateToARCamera = Self.makeRotateToARCameraMatrix(orientation: orientation)
     public var isStarting = false
     let configuration = ARWorldTrackingConfiguration()
-    
-    var txt = ""
-    var txt2 = ""
         
     var arr: [AnchorEntity] = []
+    var info: Info = Info()
+    
+    let url = "http://ec2-15-165-85-195.ap-northeast-2.compute.amazonaws.com:8080"
+    var spaceData = SpaceData()
+    var arObjectData = ARObjectData()
+    var arObjectCount = 0
+    var spaceFlag = false
+    var arObjectFlag = false
+    
+    var webView: WKWebView!
+    var webCancelBtn = UIButton()
+    
+    struct SpaceData: Codable {
+        let spaceInfo: [SpaceInfos]
+        
+        init() {
+            self.spaceInfo = []
+        }
+    }
+    
+    struct SpaceInfos: Codable {
+        let pos_name: String
+        let x1: Float
+        let x2: Float
+        let z1: Float
+        let z2: Float
+    }
+    
+    struct ARObjectData: Codable {
+        let arObjectInfo: [ARObjectInfos]
+        
+        init() {
+            self.arObjectInfo = []
+        }
+    }
+    
+    struct ARObjectInfos: Codable {
+        let file_name: String
+        let direction: String
+        let x: Float
+        let y: Float
+        let z: Float
+    }
+    
+    lazy var activityIndicator: UIActivityIndicatorView = {
+            // Create an indicator.
+            let activityIndicator = UIActivityIndicatorView()
+            activityIndicator.frame = CGRect(x: 0, y: 0, width: 50, height: 50)
+            activityIndicator.center = self.view.center
+            activityIndicator.color = UIColor.white
+        let transfrom = CGAffineTransform.init(scaleX: 3.5, y: 3.5)
+        activityIndicator.transform = transfrom
+            // Also show the indicator even when the animation is stopped.
+            activityIndicator.hidesWhenStopped = true
+            activityIndicator.style = UIActivityIndicatorView.Style.white
+            // Start animation.
+            activityIndicator.stopAnimating()
+            return activityIndicator }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        deleteDirectory()
+        createDirectory(folder: "usdzs")
+        
         arView.session.delegate = self
+        self.arView.addSubview(self.activityIndicator)
+        self.activityIndicator.startAnimating()
         
         startButton.setTitle("START", for: .normal)
         startButton.backgroundColor = .systemBlue
         startButton.layer.cornerRadius = 5
         startButton.addTarget(self, action: #selector(onButtonClick), for: .touchUpInside)
+        startButton.isHidden = true
         arView.addSubview(startButton)
         startButton.translatesAutoresizingMaskIntoConstraints = false
-        startButton.transform = CGAffineTransform(rotationAngle: -.pi * 3/2)
 
-        label.text = "● \(globalSpace) \(globalFloor)"
+        label.text = "데이터 불러오는중 ( 0 % )"
         label.textColor = .white
         label.asColor(targetString: "●", color: .red)
-        label.font = UIFont.systemFont(ofSize: 24)
+        label.font = UIFont.systemFont(ofSize: 30)
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.transform = CGAffineTransform(rotationAngle: -.pi * 3/2)
         arView.addSubview(label)
         label.backgroundColor = .black
         
+        webView = WKWebView()
+        webView.translatesAutoresizingMaskIntoConstraints = false
+        webView.navigationDelegate = self
+        webView.layer.cornerRadius = 15
+        webView.layer.masksToBounds = true
+        arView.addSubview(webView)
+        
+        webCancelBtn.backgroundColor = .clear
+        webCancelBtn.setTitle("X", for: .normal)
+        webCancelBtn.setTitleColor(.red, for: .normal)
+        webCancelBtn.addTarget(self, action: #selector(webCancelBtnTapped), for: .touchUpInside)
+        webCancelBtn.translatesAutoresizingMaskIntoConstraints = false
+        webCancelBtn.titleLabel?.font = UIFont(name: "Helvetica-Bold", size: 25)
+        arView.addSubview(webCancelBtn)
+        
         NSLayoutConstraint.activate([
-            startButton.centerYAnchor.constraint(equalTo: arView.centerYAnchor),
-            startButton.leadingAnchor.constraint(equalTo: arView.leadingAnchor, constant: -70),
+            startButton.centerXAnchor.constraint(equalTo: arView.centerXAnchor),
+            startButton.bottomAnchor.constraint(equalTo: arView.safeAreaLayoutGuide.bottomAnchor, constant: -20),
             startButton.widthAnchor.constraint(equalToConstant: 250),
             startButton.heightAnchor.constraint(equalToConstant: 40),
-            label.centerXAnchor.constraint(equalTo: startButton.centerXAnchor, constant: 250),
-            label.centerYAnchor.constraint(equalTo: startButton.bottomAnchor, constant: -15)
+            label.centerXAnchor.constraint(equalTo: arView.centerXAnchor),
+            label.topAnchor.constraint(equalTo: arView.topAnchor, constant: 30),
+            webView.trailingAnchor.constraint(equalTo: arView.trailingAnchor),
+            webView.centerYAnchor.constraint(equalTo: arView.centerYAnchor),
+            webView.heightAnchor.constraint(equalToConstant: 200),
+            webView.widthAnchor.constraint(equalToConstant: 250),
+            webCancelBtn.trailingAnchor.constraint(equalTo: arView.trailingAnchor, constant: -5),
+            webCancelBtn.topAnchor.constraint(equalTo: webView.topAnchor),
+            webCancelBtn.heightAnchor.constraint(equalToConstant: 30),
+            webCancelBtn.widthAnchor.constraint(equalToConstant: 30)
         ])
 
         arView.environment.sceneUnderstanding.options = []
@@ -69,67 +154,148 @@ class SpaceInformationViewController: UIViewController, ARSessionDelegate {
         
         //configuration.sceneReconstruction = .meshWithClassification
         configuration.environmentTexturing = .automatic
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        appDelegate.shouldSupportAllOrientation = true
         
-        let matrix1 = simd_float4x4([
-            simd_float4(1.0, 0.0, 0.0, 0.0),
-            simd_float4(0.0, 1.0, 0.0, 0.0),
-            simd_float4(0.0, 0.0, 1.0, 0.0),
-            simd_float4(0.0, -0.25, -1.5, 1.0)
-        ])
+        UIView.animate(withDuration: 0.8, delay: 0, options: [.autoreverse, .repeat], animations: {
+            self.label.alpha = 0
+        }, completion: nil)
         
-        let matrix2 = simd_float4x4([
-            simd_float4(-0.98963255, -0.008600439, 0.1433651, 0.0),
-            simd_float4(0.008427065, -0.99996287, -0.001816496, 0.0),
-            simd_float4(0.1433754, -0.00058948185, 0.98966825, 0.0),
-            simd_float4(1.52, 1.20, -3.9, 1.0)
-        ])
-        let matrix3 = simd_float4x4([
-            simd_float4(-0.98963255, -0.008600439, 0.1433651, 0.0),
-            simd_float4(0.008427065, -0.99996287, -0.001816496, 0.0),
-            simd_float4(0.1433754, -0.00058948185, 0.98966825, 0.0),
-            simd_float4(4.22, 1.20, -3.9, 1.0)
-        ])
-        let matrix4 = simd_float4x4([
-            simd_float4(-0.98963255, -0.008600439, 0.1433651, 0.0),
-            simd_float4(0.008427065, -0.99996287, -0.001816496, 0.0),
-            simd_float4(0.1433754, -0.00058948185, 0.98966825, 0.0),
-            simd_float4(7.63, 1.20, -3.9, 1.0)
-        ])
-        
-        let resultAnchor = AnchorEntity(world: matrix1)
-        let resultAnchor2 = AnchorEntity(world: matrix2)
-        let resultAnchor3 = AnchorEntity(world: matrix3)
-        let resultAnchor4 = AnchorEntity(world: matrix4)
-        
-        
-        do {
-            let modelEntity = try ModelEntity.load(named: "intro.usdz")
-            //let modelEntity2 = try ModelEntity.load(named: "gg.usdz")
-            resultAnchor.addChild(modelEntity)
-            //resultAnchor2.addChild(modelEntity2)
-            arr.append(resultAnchor)
-            //arr.append(resultAnchor2)
-            //arView.scene.addAnchor(resultAnchor, removeAfter: 3)
-        } catch {
-            print("Failed to load the model: \(error.localizedDescription)")
+        DispatchQueue.global(qos: .background).async {
+            self.getSpaceInfo(globalIdentifier)
+
+            DispatchQueue.main.async {
+                self.label.text = "데이터 불러오는중 ( 30 % )"
+                
+                while (true) {
+                    if (self.spaceFlag) {
+                        break
+                    }
+                }
+                DispatchQueue.global(qos: .background).async {
+                    self.getARObjectInfo(globalIdentifier)
+                    
+                    while (true) {
+                        if (self.arObjectFlag) {
+                            break
+                        }
+                    }
+                    DispatchQueue.main.async {
+                        self.label.text = "데이터 불러오는중 ( 60 % )"
+                        
+                        DispatchQueue.global(qos: .background).async {
+                            for i in 0..<self.arObjectData.arObjectInfo.count {
+                                let fileName = self.arObjectData.arObjectInfo[i].file_name
+                                if (!self.fileExists(fileName + ".usdz")) {
+                                    print(i)
+                                    self.fileDownload(fileName)
+                                } else {
+                                    self.arObjectCount -= 1
+                                }
+                            }
+                            
+                            while (true) {
+                                if (self.arObjectCount == 0) {
+                                    break
+                                }
+                            }
+
+                            DispatchQueue.main.async {
+                                self.label.text = "데이터 불러오는중 ( 85 % )"
+                                        for i in 0..<self.arObjectData.arObjectInfo.count {
+                                           do {
+                                               let fileName = "\(self.arObjectData.arObjectInfo[i].file_name).usdz"
+                                               let direcion = self.arObjectData.arObjectInfo[i].direction
+                                               let x = self.arObjectData.arObjectInfo[i].x
+                                               let y = self.arObjectData.arObjectInfo[i].y
+                                               let z = self.arObjectData.arObjectInfo[i].z
+                                               let matrix = self.info.makePosMatrix(direction: direcion, x: x, y: y, z: z)
+                                               let resultAnchor = AnchorEntity(world: matrix)
+                                               print(fileName)
+                                               let modelEntity = try ModelEntity.load(contentsOf: getDocumentsDirectory().appendingPathComponent("usdzs", isDirectory: true).appendingPathComponent(fileName))
+                                               resultAnchor.addChild(modelEntity)
+                                               self.arr.append(resultAnchor)
+                                           } catch {
+                                               print("Failed to load the model: \(error.localizedDescription)")
+                                            }
+                                        }
+                                        self.label.text = "데이터 불러오는중 ( 100 % )"
+                                        self.activityIndicator.stopAnimating()
+                                        self.label.text = "● \(globalSpace) \(globalFloor)"
+                                        self.label.asColor(targetString: "●", color: .red)
+                                        self.label.font = UIFont.systemFont(ofSize: 24)
+                                        self.startButton.isHidden = false
+                                        self.spaceFlag = false
+                                        self.arObjectFlag = false
+                            }
+                        }
+                    }
+                }
+            }
         }
-        do {
-            let modelEntity = try ModelEntity.load(named: "n202_1.usdz")
-            resultAnchor2.addChild(modelEntity)
-            let modelEntity2 = try ModelEntity.load(named: "n202_2.usdz")
-            resultAnchor3.addChild(modelEntity2)
-            let modelEntity3 = try ModelEntity.load(named: "n202_3.usdz")
-            resultAnchor4.addChild(modelEntity3)
-            //resultAnchor2.addChild(modelEntity2)
-            arr.append(resultAnchor2)
-            arr.append(resultAnchor3)
-            arr.append(resultAnchor4)
-            //arr.append(resultAnchor2)
-            //arView.scene.addAnchor(resultAnchor, removeAfter: 3)
-        } catch {
-            print("Failed to load the model: \(error.localizedDescription)")
-        }
         
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        appDelegate.shouldSupportAllOrientation = false
+    }
+
+    func deleteDirectory() {
+        let fileManager = FileManager.default
+        let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
+
+        if let documentsDirectory = documentsDirectory {
+            do {
+                let usdzsDirectory = documentsDirectory.appendingPathComponent("usdzs", isDirectory: true)
+                try fileManager.removeItem(at: usdzsDirectory)
+                
+                print("Document 디렉터리 삭제 완료.")
+            } catch {
+                print("Document 디렉터리 삭제 실패: \(error)")
+            }
+        }
+    }
+
+    
+    func fileExists(_ fileName: String) -> Bool {
+        let fileManager = FileManager.default
+            if let documentsDirectory = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first {
+                let usdzsDirectory = documentsDirectory.appendingPathComponent("usdzs", isDirectory: true)
+                let usdzFilePath = usdzsDirectory.appendingPathComponent(fileName)
+                
+                return fileManager.fileExists(atPath: usdzFilePath.path)
+            }
+            return false
+    }
+    
+    func fileDownload(_ fileName: String) {
+        
+        let usdzName = getDocumentsDirectory().appendingPathComponent("usdzs", isDirectory: true).appendingPathComponent("\(fileName).usdz")
+        
+        let urlPath = "/info/download?file_name=\(fileName)"
+        let finalUrl = url + urlPath
+
+        
+        if let imageUrl = URL(string: finalUrl) {
+            
+            URLSession.shared.downloadTask(with: imageUrl) { (tempFileUrl, response, error) in
+                
+                
+                if let usdzTempFileUrl = tempFileUrl {
+                    do {
+                        // Write to file
+                        let usdzData = try Data(contentsOf: usdzTempFileUrl)
+                        try usdzData.write(to: usdzName)
+                        self.arObjectCount -= 1
+                    } catch {
+                        print("Create File Error")
+                    }
+                }
+            }.resume()
+        }
     }
     
     override var prefersHomeIndicatorAutoHidden: Bool {
@@ -138,14 +304,6 @@ class SpaceInformationViewController: UIViewController, ARSessionDelegate {
     
     override var prefersStatusBarHidden: Bool {
         return true
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        // 라벨을 깜빡이게 하는 애니메이션
-        UIView.animate(withDuration: 0.8, delay: 0, options: [.autoreverse, .repeat], animations: {
-            self.label.alpha = 0
-        }, completion: nil)
     }
     
     func session(_ session: ARSession, didUpdate frame: ARFrame) {
@@ -159,21 +317,17 @@ class SpaceInformationViewController: UIViewController, ARSessionDelegate {
         let y = cameraPosition.y
         let z = cameraPosition.z
         
-        
-        if(-1.54 <= x && x < 2.96 && -6.86 <= z && z <= 1.39){
-            label.text = "● 구역 1"
-        }
-        else if(2.96 <= x && x < 5.84 && -6.41 <= z && z <= 2.15){
-            label.text = "● 구역 2"
-        }
-        else if(5.84 <= x && x <= 8.59 && -5.75 <= z && z <= 2.88){
-            label.text = "● 구역 3"
-        }
-        else{
-            label.text = "● 구역벗어남"
+        if (isStarting) {
+            for i in 0...spaceData.spaceInfo.count {
+                if (i < spaceData.spaceInfo.count && spaceData.spaceInfo[i].x1 <= x && x <= spaceData.spaceInfo[i].x2 && spaceData.spaceInfo[i].z1 <= z && z <= spaceData.spaceInfo[i].z2) {
+                    label.text = "● \(spaceData.spaceInfo[i].pos_name)"
+                    break
+                }
+                label.text = "● 구역벗어남"
+            }
         }
         
-        if isStarting{
+        if isStarting {
             label.asColor(targetString: "●", color: .green)
         }
         else{
@@ -185,21 +339,18 @@ class SpaceInformationViewController: UIViewController, ARSessionDelegate {
     }
     
     @objc
+    func webCancelBtnTapped() {
+        print("GGGG")
+//        webView.isHidden = true
+//        webCancelBtn.isHidden = true
+    }
+    
+    @objc
     func onButtonClick(_ sender: UIButton){
         if(sender != startButton){
             return
         }
         updateIsStarting(_isStarting: !isStarting)
-    }
-    
-    func save(info: String, name: String){
-        do{
-            let url = getDocumentsDirectory().appendingPathComponent("Test", isDirectory: true).appendingPathComponent(name)
-            try info.write(to: url, atomically: true, encoding: .utf8)
-        }
-        catch{
-            print(error.localizedDescription)
-        }
     }
     
     func createDirectory(folder: String) {
@@ -232,6 +383,79 @@ class SpaceInformationViewController: UIViewController, ARSessionDelegate {
             arView.session.pause()
             label.asColor(targetString: "●", color: .red)
         }
+    }
+    
+    private func getSpaceInfo(_ spaceName: String) {
+        
+        let path = "/info/space?spaceName=\(spaceName)"
+        let finalUrl = url + path
+        
+        if let url = URL(string: finalUrl){
+                    
+                var request = URLRequest.init(url: url)
+                
+                request.httpMethod = "GET"
+                request.addValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+                    
+                URLSession.shared.dataTask(with: request){ (data, response, error) in
+                        
+                    if let error = error {
+                            print("Error: \\(error.localizedDescription)")
+                            return
+                        }
+
+                        guard let data = data else {
+                            print("No data received")
+                            return
+                        }
+
+                    
+                        do {
+                            self.spaceData = try JSONDecoder().decode(SpaceData.self, from: data)
+                            self.spaceFlag = true
+                            } catch let error {
+                                print("Error: JSONS ERROR!!")
+                            }
+                }.resume() //URLSession - end
+                    
+            }
+    }
+    
+    private func getARObjectInfo(_ spaceName: String) {
+        
+        let path = "/info/arObject?spaceName=\(spaceName)"
+        let finalUrl = url + path
+        
+        if let url = URL(string: finalUrl){
+                    
+                var request = URLRequest.init(url: url)
+                
+                request.httpMethod = "GET"
+                request.addValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+                    
+                URLSession.shared.dataTask(with: request){ (data, response, error) in
+                        
+                    if let error = error {
+                            print("Error: \\(error.localizedDescription)")
+                            return
+                        }
+
+                        guard let data = data else {
+                            print("No data received")
+                            return
+                        }
+
+                    
+                        do {
+                            self.arObjectData = try JSONDecoder().decode(ARObjectData.self, from: data)
+                            self.arObjectCount = self.arObjectData.arObjectInfo.count
+                            self.arObjectFlag = true
+                            } catch let error {
+                                print("Error: ARObject ERROR!!")
+                            }
+                }.resume() //URLSession - end
+                    
+            }
     }
 
     static func cameraToDisplayRotation(orientation: UIInterfaceOrientation) -> Int {

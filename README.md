@@ -16,3 +16,8 @@
 
 <h2>3. In App</h2>
 <p><h4>- 공간등록</h4></p>
+<img width="100%" src="https://github.com/junseok-99/IndoorLocalization/assets/81612834/c6846272-f1d6-4a2d-a403-8755f427ffa8"/>
+<p><b>공간등록 버튼 클릭 -> 공간 이름 입력 -> 등록 시작 버튼 클릭</b></p>
+<br>
+<img width="100%" src="https://github.com/junseok-99/IndoorLocalization/assets/81612834/6126b9fb-c947-49bf-822d-daa3e3097f6a"/>
+<p><b>START 버튼 클릭 -> 공간 스캔 -> STOP 버튼 클릭</b></p>

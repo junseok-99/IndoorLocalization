@@ -48,6 +48,7 @@
   <img width="100%" src="https://github.com/junseok-99/IndoorLocalization/assets/81612834/67d3e867-e344-48c5-9cfc-0593fb55ffb3"/>
   <p><b>House.txt : 스캔한 공간의 Point Cloud Data</b></p>
   <p><b>Pose.txt : 공간을 스캔하며 저장된 iPhone 3D Position Data</b></p>
+  <p>txt 저장 형식 : x y z r g b</p>
 </div>
 
 <br>
@@ -87,7 +88,7 @@
 <hr>
 <div>
   <h2>STEP 2.</h2>
-  <p>‼️<b>현재 개발중 (23.10.17 ~ )</b></p>
+  <p>❗️❗️❗️<b> 현재 개발중 (23.10.17 ~ ) </b>❗️❗️❗️</p>
 </div>
 
 <br>

@@ -87,7 +87,17 @@
 <hr>
 <div>
   <h2>STEP 2.</h2>
-  <p>❗️❗️❗️<b> 현재 개발중 (23.10.17 ~ ) </b>❗️❗️❗️</p>
+  <p>‼️<b>현재 개발중 (23.10.17 ~ )</b></p>
 </div>
 
+<br>
+<hr>
+<br>
+
+<h2>4. System Architecture</h2>
+<p><b>- Space Registeration</b></p>
+<img width="100%" src="https://github.com/junseok-99/Indoor-Server/assets/81612834/869b6d22-2b55-416e-bb17-5e3828458f6e"/>
+<br>
+<p><b>- Space Information</b></p>
+<img width="100%" src="https://github.com/junseok-99/Indoor-Server/assets/81612834/704b941d-31b3-4ad2-a79f-317135307df0"/>
 

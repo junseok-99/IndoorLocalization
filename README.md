@@ -45,7 +45,7 @@
   <img width="100%" src="https://github.com/junseok-99/IndoorLocalization/assets/81612834/598af140-0b2f-4a85-9e4b-5c0a493ea1af"/>
   <p><b>연결한 iPhone Directory 접근 -> Point Cloud Document Directory -> 저장된 데이터 확인</b></p>
   
-  <img width="100%" src="  https://github.com/junseok-99/IndoorLocalization/assets/81612834/67d3e867-e344-48c5-9cfc-0593fb55ffb3"/>
+  <img width="100%" src="https://github.com/junseok-99/IndoorLocalization/assets/81612834/67d3e867-e344-48c5-9cfc-0593fb55ffb3"/>
   <p><b>House.txt : 스캔한 공간의 Point Cloud Data</b></p>
   <p><b>Pose.txt : 공간을 스캔하며 저장된 iPhone 3D Position Data</b></p>
 </div>
@@ -67,3 +67,27 @@
   <p><b>House.txt + Pose.txt</b></p>
   <img width="100%" src="https://github.com/junseok-99/IndoorLocalization/assets/81612834/8e5d972a-7172-4d91-89d7-42dc519ef608"/>
 </div>
+
+<br>
+<hr>
+<br>
+
+<h2>- 공간안내 : 사용자의 실내 위치를 추정하며 AR경험 제공으로 공간을 안내함 (사용자가 진행)</h2>
+
+<br>
+
+
+<div>
+  <h2>STEP 1.</h2>
+  <img width="100%" src="https://github.com/junseok-99/IndoorLocalization/assets/81612834/8e91b514-4733-4d45-8cfd-16c16a182769"/>
+  <p><b>공간안내 버튼 클릭 -> 건물, 층 수 입력 -> 안내 시작 버튼 클릭</b></p>
+</div>
+
+<br>
+<hr>
+<div>
+  <h2>STEP 2.</h2>
+  <p>❗️❗️❗️<b> 현재 개발중 (23.10.17 ~ ) </b>❗️❗️❗️</p>
+</div>
+
+

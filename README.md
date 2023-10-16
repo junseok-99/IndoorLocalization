@@ -14,3 +14,5 @@
 <p><b>Device : iPhone 12 Pro 이상</b></p>
 <p><b>iOS : iOS 14.0 이상</b></p>
 
+<h2>3. In App</h2>
+<p><h4>- 공간등록</h4></p>

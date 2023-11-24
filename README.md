@@ -101,7 +101,7 @@
 
 <div>
   <h2>STEP 1.</h2>
-  <img width="100%" src="https://github.com/junseok-99/IndoorLocalization/assets/81612834/8e91b514-4733-4d45-8cfd-16c16a182769"/>
+  <img width="100%" src="https://github.com/junseok-99/Indoor-Server/assets/81612834/e25da309-80c7-4cb5-91ac-582c26483ab5"/>
   <p><b>공간안내 버튼 클릭 -> 건물, 층 수 입력 -> 안내 시작 버튼 클릭</b></p>
 </div>
 
@@ -109,7 +109,55 @@
 <hr>
 <div>
   <h2>STEP 2.</h2>
-  <p>❗️❗️❗️<b> 현재 개발중 (23.10.17 ~ ) </b>❗️❗️❗️</p>
+  <img width="100%" src="https://github.com/junseok-99/Indoor-Server/assets/81612834/dd8fa253-e1fd-4a1e-b941-69d7c19f6f9e"/>
+  <p>서버에서 데이터를 불러옵니다.</p>
+</div>
+
+<br>
+<hr>
+<div>
+  <h2>STEP 3.</h2>
+  <img width="100%" src="https://github.com/junseok-99/Indoor-Server/assets/81612834/23f2b325-8974-46c4-b6ff-30126c9f720d"/>
+  <p>지정된 위치에서 우측 하단의 이미지와 화면을 일치시키고 START</p>
+</div>
+
+<br>
+<hr>
+<div>
+  <h2>STEP 4.</h2>
+  <img width="100%" src="https://github.com/junseok-99/Indoor-Server/assets/81612834/08d4a8af-a75a-4436-a459-15127ea1eef8"/>
+  <p>시작 시 인트로 제공</p>
+</div>
+
+<br>
+<div>
+  <img width="100%" src="https://github.com/junseok-99/Indoor-Server/assets/81612834/d9eb85be-c4f8-48ef-8ef0-a835b9253ee1"/>
+  <p>화면 중앙 상단에 실시간으로 사용자의 현재 위치를 알려줌</p>
+</div>
+
+<br>
+<div>
+  <img width="100%" src="https://github.com/junseok-99/Indoor-Server/assets/81612834/de821a92-116a-4a0b-a1d6-a19fda8c6989"/>
+  <p>AR 경험으로 강의실 표지판과 시간표 제공</p>
+</div>
+
+<br>
+<div>
+  <img width="100%" src="https://github.com/junseok-99/Indoor-Server/assets/81612834/c299d2ec-9c6c-4dc1-8780-55da8d789500"/>
+  <p>강의실 외 공간은 안내 제공</p>
+</div>
+
+<br>
+<div>
+  <img width="100%" src="https://github.com/junseok-99/Indoor-Server/assets/81612834/b3654644-e624-486e-b0f5-9186b0488d5d"/>
+  <p>길안내 기능 제공</p>
+  <p>각 공간의 유도선 색상을 알려줌</p>
+</div>
+
+<br>
+<div>
+  <img width="100%" src="https://github.com/junseok-99/Indoor-Server/assets/81612834/7e0207e5-16b0-4b62-b060-c27b4923ce96"/>
+  <p>색상에 맞는 유도선을 따라가 원하는 곳으로 이동가능</p>
 </div>
 
 <br>
@@ -117,9 +165,9 @@
 <br>
 
 <h2>4. System Architecture</h2>
-<p><b>- Space Registeration</b></p>
-<img width="100%" src="https://github.com/junseok-99/Indoor-Server/assets/81612834/869b6d22-2b55-416e-bb17-5e3828458f6e"/>
+<p><b>- 공간 등록</b></p>
+<img width="100%" src="https://github.com/junseok-99/Indoor-Server/assets/81612834/e768259f-6a8a-42fa-a570-6f40ededddb7"/>
 <br>
-<p><b>- Space Information</b></p>
-<img width="100%" src="https://github.com/junseok-99/Indoor-Server/assets/81612834/704b941d-31b3-4ad2-a79f-317135307df0"/>
+<p><b>- 공간 안</b></p>
+<img width="100%" src="https://github.com/junseok-99/Indoor-Server/assets/81612834/8ffded86-4d92-4248-84c2-34389016710f"/>
 

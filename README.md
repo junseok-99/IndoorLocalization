@@ -1,84 +1,172 @@
-# Save iOS ARFrame and Point Cloud
+<h1>iPhone을 사용한 실내 위치추정 및 AR 안내 제공 APP</h1>
 
-This project improves the usability of the [sample code](https://developer.apple.com/documentation/arkit/environmental_analysis/displaying_a_point_cloud_using_scene_depth) from WWDC20 session [10611: Explore ARKit 4](https://developer.apple.com/wwdc20/10611/). Note that the sample code is also on the `original` branch and the original code from WWDC20 can be checked out at the first commit. The original project places points in the real-world using the scene's depth data to visualize the shape of the physical environment. 
-
-## Usability functions
-
-This project adds the following functions:
-
-* Add buttons to start/pause recordings.
-
-* Save [ARFrame](https://developer.apple.com/documentation/arkit/arframe) raw data asynchronously at a chosen rate when recording. The selected data include
-
-  ```swift
-  // custom struct for pulling necessary data from arframes
-  struct ARFrameDataPack {
-      var timestamp: Double
-      var cameraTransform: simd_float4x4
-      var cameraEulerAngles: simd_float3
-      var depthMap: CVPixelBuffer
-      var smoothedDepthMap: CVPixelBuffer
-      var confidenceMap: CVPixelBuffer
-      var capturedImage: CVPixelBuffer
-      var localToWorld: simd_float4x4
-      var cameraIntrinsicsInversed: simd_float3x3
-  }
-  ```
+<h2>💻 사용 기술 스택</h2>
+<div>
+  <img src="https://img.shields.io/badge/swift-F05138?style=for-the-badge&logo=swift&logoColor=white">
   
-  The sampling rate is controlled by a slider. One of every `n` *new* frames will be saved. The current sampling rate will be indicated in the filename, i.e. `{timestamp}_{samplingRate}.[json|jpeg]`. Please note that *all* frames will contribute to the point cloud as well as AR display. In other words, all the points in AR will be saved to `PLY` point cloud file but only `1/n` of them will be saved as `json` and `jpeg`.
+  <br>
   
-  The captured images are stored in `jpeg` format and others are coded into `json` files of which the format is specified as below.
+  <img src="https://img.shields.io/badge/arkit-000000?style=for-the-badge&logo=arkit&logoColor=white">
+  <img src="https://img.shields.io/badge/realitykit-000000?style=for-the-badge&logo=realitykit&logoColor=white">
   
-  ```swift
-  struct DataPack: Codable {
-      var timestamp: Double
-      var cameraTransform: simd_float4x4 // The position and orientation of the camera in world coordinate space.
-      var cameraEulerAngles: simd_float3 // The orientation of the camera, expressed as roll, pitch, and yaw values.
-      var depthMap: [[Float32]]
-      var smoothedDepthMap: [[Float32]]
-      var confidenceMap: [[UInt8]]
-      var localToWorld: simd_float4x4
-      var cameraIntrinsicsInversed: simd_float3x3
-  }
-  ```
+  <br>
   
-  They can be retrieved in Finder with USB connection. Those raw data make it possible to leverage photogrammetry techniques for various tasks.
-
-<p align="center">
-  <img src="README.assets/image-20221025144805695.png" width=50%/>
-</p>
-
-
-
-* Save the point cloud in `PLY` format when the recording is stopped.
-
-  <p align="center">
-    <img src="README.assets/image-20221025145702567.png" width=60%/>
-  </p>
-
-* Add low memory warning and file saving progress.
-
-  <p align="center">
-    <img src="README.assets/IMG_2003.PNG" width=80%/>
-  </p>
-
-## Discussions
-
-* [This answer](https://developer.apple.com/forums/thread/658109?answerId=643549022#643549022) has been very helpful in exporting point cloud in PLY format.
-
-* According to [this answer](https://stackoverflow.com/a/51394204/15374210), releasing ARFrame memory pool holding is important. If `ARFrame currentFrame` is passed into time-consuming async tasks like converting data formats or saving files to disks, the memory pool used by ARFrame is retained and no more frames can be written to the pool. In this case, a warning will arise.
-
-  ```
-  ARSessionDelegate is retaining XX ARFrames.
-  ```
-
-  To solve this problem, copy over the selected data to custom struct and pass that to async tasks. To deep copy `CVPixelBuffer`, try [this code](https://gist.github.com/humblehacker/a55db40791605c4e40411f70bcd13d13).
-
-* To get warning on low memory, see [this doc](https://developer.apple.com/documentation/xcode/responding-to-low-memory-warnings).
-
-* Similar projects
-
-  * [ryanphilly/IOS-PointCloud](https://github.com/ryanphilly/IOS-PointCloud)
-  * [pjessesco/iPad-PLY-scanner](https://github.com/pjessesco/iPad-PLY-scanner)
-
   
+  
+  <img src="https://img.shields.io/badge/xcode-147EFB?style=for-the-badge&logo=xcode&logoColor=white">
+</div>
+
+<br>
+<hr>
+<br>
+
+<h2>1. Build</h2>
+<p><b>1. Open Project</b></p>
+<p><b>2. Targets -> Signing & Capabilities -> Check Teams</b></p>
+<p><b>3. iPhone과 맥북 연결</b></p>
+<p><b>4. Build in connected iPhone</b></p>
+
+<br>
+<hr>
+<br>
+
+<h2>2. Supported Devices & iOS</h2>
+<p><b>❗️ LiDAR Scanner가 장착되지 않은 기기 지원 X</b></p>
+<p><b>Device : iPhone 12 Pro 이상</b></p>
+<p><b>iOS : iOS 14.0 이상</b></p>
+
+<br>
+<hr>
+<br>
+
+<h2>3. In App</h2>
+<h2>- 공간등록 : 위치 추정을 서비스 할 공간을 등록하는 과정 (개발자가 진행)</h2>
+
+<br>
+
+
+<div>
+  <h2>STEP 1.</h2>
+  <img width="100%" src="https://github.com/junseok-99/IndoorLocalization/assets/81612834/1221abf6-9f83-4ea6-977a-27b7b922be3a"/>
+  <p><b>공간등록 버튼 클릭 -> 공간 이름 입력 -> 등록 시작 버튼 클릭</b></p>
+</div>
+
+<br>
+<hr>
+<div>
+  <h2>STEP 2.</h2>
+  <img width="100%" src="https://github.com/junseok-99/IndoorLocalization/assets/81612834/7ebc8b80-fa4a-4fb8-af39-04f296f2d397"/>
+  <p><b>START 버튼 클릭 -> 공간 스캔 -> STOP 버튼 클릭</b></p>
+</div>
+
+<br>
+<hr>
+<div>
+  <h2>STEP 3.</h2>
+  <img width="100%" src="https://github.com/junseok-99/IndoorLocalization/assets/81612834/598af140-0b2f-4a85-9e4b-5c0a493ea1af"/>
+  <p><b>연결한 iPhone Directory 접근 -> Point Cloud Document Directory -> 저장된 데이터 확인</b></p>
+  
+  <img width="100%" src="https://github.com/junseok-99/IndoorLocalization/assets/81612834/67d3e867-e344-48c5-9cfc-0593fb55ffb3"/>
+  <p><b>House.txt : 스캔한 공간의 Point Cloud Data</b></p>
+  <p><b>Pose.txt : 공간을 스캔하며 저장된 iPhone 3D Position Data</b></p>
+  <p><b>txt 저장 형식 : x y z r g b</b></p>
+</div>
+
+<br>
+<hr>
+<div>
+  <h2>RESULT (DATA VISUALIZATION).</h2>
+  <p><b>House.txt</b></p>
+  <img width="100%" src="https://github.com/junseok-99/IndoorLocalization/assets/81612834/32d3efa4-a4bb-42b2-98ee-73264ad5fb06"/>
+  
+  <br><br>
+  
+  <p><b>Pose.txt</b></p>
+  <img width="100%" src="https://github.com/junseok-99/IndoorLocalization/assets/81612834/7a04efcf-9760-4e76-a0e2-3b83d2af0e3c"/>
+  
+  <br><br>
+  
+  <p><b>House.txt + Pose.txt</b></p>
+  <img width="100%" src="https://github.com/junseok-99/IndoorLocalization/assets/81612834/8e5d972a-7172-4d91-89d7-42dc519ef608"/>
+</div>
+
+<br>
+<hr>
+<br>
+
+<h2>- 공간안내 : 사용자의 실내 위치를 추정하며 AR경험 제공으로 공간 안내 (사용자가 진행)</h2>
+
+<br>
+
+
+<div>
+  <h2>STEP 1.</h2>
+  <img width="100%" src="https://github.com/junseok-99/Indoor-Server/assets/81612834/e25da309-80c7-4cb5-91ac-582c26483ab5"/>
+  <p><b>공간안내 버튼 클릭 -> 건물, 층 수 입력 -> 안내 시작 버튼 클릭</b></p>
+</div>
+
+<br>
+<hr>
+<div>
+  <h2>STEP 2.</h2>
+  <img width="100%" src="https://github.com/junseok-99/Indoor-Server/assets/81612834/dd8fa253-e1fd-4a1e-b941-69d7c19f6f9e"/>
+  <p><b>서버에서 데이터를 불러옵니다.</b></p>
+</div>
+
+<br>
+<hr>
+<div>
+  <h2>STEP 3.</h2>
+  <img width="100%" src="https://github.com/junseok-99/Indoor-Server/assets/81612834/23f2b325-8974-46c4-b6ff-30126c9f720d"/>
+  <p><b>지정된 위치에서 우측 하단의 이미지와 화면을 일치시키고 START</b></p>
+</div>
+
+<br>
+<hr>
+<div>
+  <h2>STEP 4.</h2>
+  <img width="100%" src="https://github.com/junseok-99/Indoor-Server/assets/81612834/08d4a8af-a75a-4436-a459-15127ea1eef8"/>
+  <p><b>시작 시 인트로 제공</b></p>
+</div>
+
+<br>
+<div>
+  <img width="100%" src="https://github.com/junseok-99/Indoor-Server/assets/81612834/d9eb85be-c4f8-48ef-8ef0-a835b9253ee1"/>
+  <p><b>화면 중앙 상단에 실시간으로 사용자의 현재 위치를 알려줌</b></p>
+</div>
+
+<br>
+<div>
+  <img width="100%" src="https://github.com/junseok-99/Indoor-Server/assets/81612834/de821a92-116a-4a0b-a1d6-a19fda8c6989"/>
+  <p><b>AR 경험으로 강의실 표지판과 시간표 제공</b></p>
+</div>
+
+<br>
+<div>
+  <img width="100%" src="https://github.com/junseok-99/Indoor-Server/assets/81612834/c299d2ec-9c6c-4dc1-8780-55da8d789500"/>
+  <p><b>강의실 외 공간은 안내 제공</b></p>
+</div>
+
+<br>
+<div>
+  <img width="100%" src="https://github.com/junseok-99/Indoor-Server/assets/81612834/b3654644-e624-486e-b0f5-9186b0488d5d"/>
+  <p><b>길안내 기능 제공</b></p>
+  <p><b>각 공간의 유도선 색상을 알려줌</b></p>
+</div>
+
+<br>
+<div>
+  <img width="100%" src="https://github.com/junseok-99/Indoor-Server/assets/81612834/7e0207e5-16b0-4b62-b060-c27b4923ce96"/>
+  <p><b>색상에 맞는 유도선을 따라가 원하는 곳으로 이동가능</b></p>
+</div>
+
+<br>
+<hr>
+<br>
+
+<h2>4. System Architecture</h2>
+<p><b>- 공간 등록</b></p>
+<img width="100%" src="https://github.com/junseok-99/Indoor-Server/assets/81612834/e768259f-6a8a-42fa-a570-6f40ededddb7"/>
+<br>
+<p><b>- 공간 안내</b></p>
+<img width="100%" src="https://github.com/junseok-99/Indoor-Server/assets/81612834/8ffded86-4d92-4248-84c2-34389016710f"/>

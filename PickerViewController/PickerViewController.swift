@@ -25,7 +25,7 @@ class PickerViewController: UIViewController, UIPickerViewDelegate, UIPickerView
 //    ]
     let floorData = [
         "식물과학관(N)": ["202"],
-        "한누리관(I)": ["7F", "I718(미구현)"],
+        "한누리관(I)": ["1F", "3F", "7F", "718"],
     ]
     
     var rightColumnData = [String]()
@@ -84,6 +84,7 @@ class PickerViewController: UIViewController, UIPickerViewDelegate, UIPickerView
     func onPickDone(){
         if(globalSpace.isEmpty){
             globalSpace = countryData[0]
+            globalIdentifier = countryIdentifier[0]
         }
         
         spaceName.text = globalSpace

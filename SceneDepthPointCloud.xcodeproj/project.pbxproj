@@ -11,8 +11,12 @@
 		6858CFB92A092AEB0063E6A5 /* Global.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6858CFB72A092AEB0063E6A5 /* Global.swift */; };
 		6858CFBA2A092AEB0063E6A5 /* LandingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6858CFB82A092AEB0063E6A5 /* LandingViewController.swift */; };
 		6858CFBD2A092E7D0063E6A5 /* SpaceInformationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6858CFBC2A092E7D0063E6A5 /* SpaceInformationViewController.swift */; };
+		882C8FFB2B13A7A100C0F634 /* I_1F.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 882C8FFA2B13A7A100C0F634 /* I_1F.jpg */; };
+		884D4CEE2AF923A200B1DCDA /* I_3F.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 884D4CED2AF923A200B1DCDA /* I_3F.jpg */; };
 		8881F89E2A8CECFD00CE4A4D /* Info.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8881F89D2A8CECFD00CE4A4D /* Info.swift */; };
 		88B5B1BA2A2A28630048B391 /* TextFieldController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88B5B1B92A2A28630048B391 /* TextFieldController.swift */; };
+		88F36FFF2AF197BA00E7945E /* I_7F.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 88F36FFE2AF197BA00E7945E /* I_7F.jpg */; };
+		88F370012AF19F1600E7945E /* empty.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 88F370002AF19F1600E7945E /* empty.jpg */; };
 		88F3C33D2A04100500F3FE32 /* TcpClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88F3C33C2A04100400F3FE32 /* TcpClient.swift */; };
 		B966DD5E28E94A04000B9F38 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = B966DD5D28E94A04000B9F38 /* Utils.swift */; };
 		E73DD13124636FEF00D77039 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E73DD13024636FEF00D77039 /* AppDelegate.swift */; };
@@ -31,8 +35,12 @@
 		6858CFB72A092AEB0063E6A5 /* Global.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Global.swift; sourceTree = "<group>"; };
 		6858CFB82A092AEB0063E6A5 /* LandingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LandingViewController.swift; sourceTree = "<group>"; };
 		6858CFBC2A092E7D0063E6A5 /* SpaceInformationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceInformationViewController.swift; sourceTree = "<group>"; };
+		882C8FFA2B13A7A100C0F634 /* I_1F.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = I_1F.jpg; sourceTree = "<group>"; };
+		884D4CED2AF923A200B1DCDA /* I_3F.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = I_3F.jpg; sourceTree = "<group>"; };
 		8881F89D2A8CECFD00CE4A4D /* Info.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Info.swift; sourceTree = "<group>"; };
 		88B5B1B92A2A28630048B391 /* TextFieldController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldController.swift; sourceTree = "<group>"; };
+		88F36FFE2AF197BA00E7945E /* I_7F.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = I_7F.jpg; sourceTree = "<group>"; };
+		88F370002AF19F1600E7945E /* empty.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = empty.jpg; sourceTree = "<group>"; };
 		88F3C33C2A04100400F3FE32 /* TcpClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TcpClient.swift; sourceTree = "<group>"; };
 		948146554F46E56B015690CC /* SampleCode.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = SampleCode.xcconfig; path = Configuration/SampleCode.xcconfig; sourceTree = "<group>"; };
 		B57D60B9736905755DECF7CE /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
@@ -98,11 +106,15 @@
 			path = TextFieldController;
 			sourceTree = "<group>";
 		};
-		88E1A2E62A2AE2ED00EAEA90 /* Objects */ = {
+		88E1A2E62A2AE2ED00EAEA90 /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				88F370002AF19F1600E7945E /* empty.jpg */,
+				884D4CED2AF923A200B1DCDA /* I_3F.jpg */,
+				88F36FFE2AF197BA00E7945E /* I_7F.jpg */,
+				882C8FFA2B13A7A100C0F634 /* I_1F.jpg */,
 			);
-			path = Objects;
+			path = Images;
 			sourceTree = "<group>";
 		};
 		A6415A999BE1C768F18B2649 /* Configuration */ = {
@@ -124,7 +136,7 @@
 		E73DD12424636FEF00D77039 = {
 			isa = PBXGroup;
 			children = (
-				88E1A2E62A2AE2ED00EAEA90 /* Objects */,
+				88E1A2E62A2AE2ED00EAEA90 /* Images */,
 				88B5B1B82A2A28220048B391 /* TextFieldController */,
 				683B1D982A23910D00AA87AC /* PickerViewController */,
 				6858CFBB2A092E470063E6A5 /* SpaceInformationView */,
@@ -225,8 +237,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				E73DD14024636FF100D77039 /* LaunchScreen.storyboard in Resources */,
+				88F36FFF2AF197BA00E7945E /* I_7F.jpg in Resources */,
+				884D4CEE2AF923A200B1DCDA /* I_3F.jpg in Resources */,
 				E73DD13D24636FF100D77039 /* Assets.xcassets in Resources */,
+				882C8FFB2B13A7A100C0F634 /* I_1F.jpg in Resources */,
 				E73DD13B24636FEF00D77039 /* Main.storyboard in Resources */,
+				88F370012AF19F1600E7945E /* empty.jpg in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

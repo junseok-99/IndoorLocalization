@@ -7,10 +7,11 @@ import RealityKit
 import Foundation
 import WebKit
 
-class SpaceInformationViewController: UIViewController, ARSessionDelegate, URLSessionTaskDelegate, WKNavigationDelegate {
+class SpaceInformationViewController: UIViewController, ARSessionDelegate {
     private let startButton = UIButton()
     @IBOutlet var arView: ARView!
     let label = UILabel()
+    let startLabel = UILabel()
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
     
     private let orientation = UIInterfaceOrientation.landscapeRight
@@ -27,9 +28,8 @@ class SpaceInformationViewController: UIViewController, ARSessionDelegate, URLSe
     var arObjectCount = 0
     var spaceFlag = false
     var arObjectFlag = false
-    
-    var webView: WKWebView!
-    var webCancelBtn = UIButton()
+    var checkImage : UIImage?
+    var imgView = UIImageView()
     
     struct SpaceData: Codable {
         let spaceInfo: [SpaceInfos]
@@ -57,7 +57,6 @@ class SpaceInformationViewController: UIViewController, ARSessionDelegate, URLSe
     
     struct ARObjectInfos: Codable {
         let file_name: String
-        let direction: String
         let x: Float
         let y: Float
         let z: Float
@@ -80,7 +79,8 @@ class SpaceInformationViewController: UIViewController, ARSessionDelegate, URLSe
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        print(globalIdentifier)
+        checkImage = UIImage(named: "\(globalIdentifier).jpg") ?? UIImage(named: "empty.jpg")
         deleteDirectory()
         createDirectory(folder: "usdzs")
         
@@ -104,20 +104,23 @@ class SpaceInformationViewController: UIViewController, ARSessionDelegate, URLSe
         arView.addSubview(label)
         label.backgroundColor = .black
         
-        webView = WKWebView()
-        webView.translatesAutoresizingMaskIntoConstraints = false
-        webView.navigationDelegate = self
-        webView.layer.cornerRadius = 15
-        webView.layer.masksToBounds = true
-        arView.addSubview(webView)
+        startLabel.text = "카메라 화면을 아래 이미지와 맞추고\n START를 눌러주세요!"
+        startLabel.textAlignment = .center
+        startLabel.numberOfLines = 2
+        startLabel.textColor = .white
+        startLabel.font = UIFont.boldSystemFont(ofSize: 18)
+        startLabel.translatesAutoresizingMaskIntoConstraints = false
+        startLabel.backgroundColor = .black
+        arView.addSubview(startLabel)
         
-        webCancelBtn.backgroundColor = .clear
-        webCancelBtn.setTitle("X", for: .normal)
-        webCancelBtn.setTitleColor(.red, for: .normal)
-        webCancelBtn.addTarget(self, action: #selector(webCancelBtnTapped), for: .touchUpInside)
-        webCancelBtn.translatesAutoresizingMaskIntoConstraints = false
-        webCancelBtn.titleLabel?.font = UIFont(name: "Helvetica-Bold", size: 25)
-        arView.addSubview(webCancelBtn)
+        imgView.image = checkImage
+        imgView.contentMode = .scaleToFill
+        imgView.translatesAutoresizingMaskIntoConstraints = false
+        arView.addSubview(imgView)
+        
+        imgView.isHidden = true
+        startLabel.isHidden = true
+        
         
         NSLayoutConstraint.activate([
             startButton.centerXAnchor.constraint(equalTo: arView.centerXAnchor),
@@ -126,23 +129,21 @@ class SpaceInformationViewController: UIViewController, ARSessionDelegate, URLSe
             startButton.heightAnchor.constraint(equalToConstant: 40),
             label.centerXAnchor.constraint(equalTo: arView.centerXAnchor),
             label.topAnchor.constraint(equalTo: arView.topAnchor, constant: 30),
-            webView.trailingAnchor.constraint(equalTo: arView.trailingAnchor),
-            webView.centerYAnchor.constraint(equalTo: arView.centerYAnchor),
-            webView.heightAnchor.constraint(equalToConstant: 200),
-            webView.widthAnchor.constraint(equalToConstant: 250),
-            webCancelBtn.trailingAnchor.constraint(equalTo: arView.trailingAnchor, constant: -5),
-            webCancelBtn.topAnchor.constraint(equalTo: webView.topAnchor),
-            webCancelBtn.heightAnchor.constraint(equalToConstant: 30),
-            webCancelBtn.widthAnchor.constraint(equalToConstant: 30)
+            imgView.trailingAnchor.constraint(equalTo: arView.trailingAnchor, constant: -20),
+            imgView.centerYAnchor.constraint(equalTo: startButton.centerYAnchor, constant: -15),
+            imgView.heightAnchor.constraint(equalToConstant: 120),
+            imgView.widthAnchor.constraint(equalToConstant: 250),
+            startLabel.bottomAnchor.constraint(equalTo: imgView.topAnchor, constant: -10),
+            startLabel.centerXAnchor.constraint(equalTo: imgView.centerXAnchor)
         ])
 
         arView.environment.sceneUnderstanding.options = []
         
         // Turn on occlusion from the scene reconstruction's mesh.
-        arView.environment.sceneUnderstanding.options.insert(.occlusion)
+        //arView.environment.sceneUnderstanding.options.insert(.occlusion)
         
         // Turn on physics for the scene reconstruction's mesh.
-        arView.environment.sceneUnderstanding.options.insert(.physics)
+        //arView.environment.sceneUnderstanding.options.insert(.physics)
         
 
         // Display a debug visualization of the mesh.
@@ -208,11 +209,10 @@ class SpaceInformationViewController: UIViewController, ARSessionDelegate, URLSe
                                         for i in 0..<self.arObjectData.arObjectInfo.count {
                                            do {
                                                let fileName = "\(self.arObjectData.arObjectInfo[i].file_name).usdz"
-                                               let direcion = self.arObjectData.arObjectInfo[i].direction
                                                let x = self.arObjectData.arObjectInfo[i].x
                                                let y = self.arObjectData.arObjectInfo[i].y
                                                let z = self.arObjectData.arObjectInfo[i].z
-                                               let matrix = self.info.makePosMatrix(direction: direcion, x: x, y: y, z: z)
+                                               let matrix = self.info.makePosMatrix(x: x, y: y, z: z)
                                                let resultAnchor = AnchorEntity(world: matrix)
                                                print(fileName)
                                                let modelEntity = try ModelEntity.load(contentsOf: getDocumentsDirectory().appendingPathComponent("usdzs", isDirectory: true).appendingPathComponent(fileName))
@@ -237,10 +237,17 @@ class SpaceInformationViewController: UIViewController, ARSessionDelegate, URLSe
             }
         }
         
+        arView.session.run(configuration, options: [.removeExistingAnchors, .resetTracking])
+        imgView.isHidden = false
+        startLabel.isHidden = false
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         appDelegate.shouldSupportAllOrientation = false
+        globalIdentifier = ""
+        globalSpace = ""
+        globalFloor = ""
+        globalVariable = ""
     }
 
     func deleteDirectory() {
@@ -319,7 +326,12 @@ class SpaceInformationViewController: UIViewController, ARSessionDelegate, URLSe
         
         if (isStarting) {
             for i in 0...spaceData.spaceInfo.count {
-                if (i < spaceData.spaceInfo.count && spaceData.spaceInfo[i].x1 <= x && x <= spaceData.spaceInfo[i].x2 && spaceData.spaceInfo[i].z1 <= z && z <= spaceData.spaceInfo[i].z2) {
+                if (i < spaceData.spaceInfo.count 
+                    && spaceData.spaceInfo[i].x1 <= x
+                    && x <= spaceData.spaceInfo[i].x2
+                    && spaceData.spaceInfo[i].z1 <= z
+                    && z <= spaceData.spaceInfo[i].z2) {
+                    
                     label.text = "● \(spaceData.spaceInfo[i].pos_name)"
                     break
                 }
@@ -331,18 +343,10 @@ class SpaceInformationViewController: UIViewController, ARSessionDelegate, URLSe
             label.asColor(targetString: "●", color: .green)
         }
         else{
-            label.text = "● 스캔 중지"
             label.asColor(targetString: "●", color: .red)
         }
         
         
-    }
-    
-    @objc
-    func webCancelBtnTapped() {
-        print("GGGG")
-//        webView.isHidden = true
-//        webCancelBtn.isHidden = true
     }
     
     @objc
@@ -371,6 +375,9 @@ class SpaceInformationViewController: UIViewController, ARSessionDelegate, URLSe
         if (isStarting){
             startButton.setTitle("PAUSE", for: .normal)
             startButton.backgroundColor = .systemRed
+            imgView.isHidden = true
+            startLabel.isHidden = true
+            arView.session.pause()
             arView.session.run(configuration, options: [.removeExistingAnchors, .resetTracking])
             arView.scene.addAnchor(arr[0], removeAfter: 5)
             for i in 1..<arr.count{
@@ -378,9 +385,10 @@ class SpaceInformationViewController: UIViewController, ARSessionDelegate, URLSe
             }
             
         } else {
+            imgView.isHidden = false
+            startLabel.isHidden = false
             startButton.setTitle("START", for: .normal)
             startButton.backgroundColor = .systemBlue
-            arView.session.pause()
             label.asColor(targetString: "●", color: .red)
         }
     }
@@ -388,6 +396,7 @@ class SpaceInformationViewController: UIViewController, ARSessionDelegate, URLSe
     private func getSpaceInfo(_ spaceName: String) {
         
         let path = "/info/space?spaceName=\(spaceName)"
+        print(path)
         let finalUrl = url + path
         
         if let url = URL(string: finalUrl){
